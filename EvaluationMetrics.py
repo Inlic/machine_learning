@@ -126,13 +126,44 @@ def yodens_jay(actual, predicted):
         x = lookup[actual[i]]
         y = lookup[predicted[i]]
         matrix[y][x] += 1
-    return matrix[0][0] / (matrix[0][0]+matrix[1][0]) + matrix[1][1] / (matrix[1][1]+matrix[0][1]) - 1
+    return (matrix[0][0] / (matrix[0][0]+matrix[1][0])) + (matrix[1][1] / (matrix[1][1]+matrix[0][1])) - 1
 
 jay = yodens_jay(actual,predicted)
 
 print(jay)
 
 print("######################")
+
+def cohens_kappa(actual, predicted):
+    unique = set(actual)
+    matrix = [list() for x in range(len(unique))]
+    for i in range(len(unique)):
+        matrix[i] = [0 for x in range(len(unique))]
+    lookup = dict()
+    for i, value in enumerate(unique):
+        lookup[value] = i
+    for i in range(len(actual)):
+        x = lookup[actual[i]]
+        y = lookup[predicted[i]]
+        matrix[y][x] += 1
+    a = matrix[0][0]
+    b = matrix[0][1]
+    c = matrix[1][0]
+    d = matrix[1][1]
+    tot = a+b+c+d
+    p0 = (a+d) / tot
+    pyes = ((a+b) / tot) * ((a+c) / tot)
+    pno = ((c+d) / tot) * ((b+d) / tot)
+    pe = pyes + pno
+    return (p0 - pe) / (1 - pe)
+
+
+kappa = cohens_kappa(actual,predicted)
+print("Cohens Kappa, Range between 0 and 1 usually possible to be negative")
+print(kappa)
+
+print("#######################")
+
 
 def mae_metric(actual,predicted):
     sum_error = 0.0
