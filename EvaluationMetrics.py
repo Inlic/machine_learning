@@ -1,3 +1,5 @@
+from math import sqrt
+
 def accuracy_metric(actual,predicted):
     correct = 0
     for i in range(len(actual)):
@@ -41,6 +43,97 @@ print("#######################")
 # Interpretation of confusion matrix
 # Prediction errors on the left diagonal - One 1 counted as 0, Two 0 counted as 1
 
+# Precision and recall
+
+def prec_recall(actual, predicted):
+    unique = set(actual)
+    matrix = [list() for x in range(len(unique))]
+    for i in range(len(unique)):
+        matrix[i] = [0 for x in range(len(unique))]
+    lookup = dict()
+    for i, value in enumerate(unique):
+        lookup[value] = i
+    for i in range(len(actual)):
+        x = lookup[actual[i]]
+        y = lookup[predicted[i]]
+        matrix[y][x] += 1
+    return (matrix[0][0]/(matrix[0][0]+matrix[0][1])), (matrix[0][0]/(matrix[0][0]+matrix[1][0]))
+
+precision, recall = prec_recall(actual,predicted)
+print("precision")
+print(precision)
+print("recall")
+print(recall)
+
+
+def f_measure(actual, predicted):
+    unique = set(actual)
+    matrix = [list() for x in range(len(unique))]
+    for i in range(len(unique)):
+        matrix[i] = [0 for x in range(len(unique))]
+    lookup = dict()
+    for i, value in enumerate(unique):
+        lookup[value] = i
+    for i in range(len(actual)):
+        x = lookup[actual[i]]
+        y = lookup[predicted[i]]
+        matrix[y][x] += 1
+    return matrix[0][0] / (matrix[0][0]+0.5*(matrix[0][1]+matrix[1][0]))
+
+print("F Measure Ranges from 0 to 1")
+
+fmeasure = f_measure(actual,predicted)
+print(fmeasure)
+
+print("######################")
+
+# Matthews Correlation Coefficient
+# -1 bad, 0 random, 1 great
+
+def matthews_corr(actual, predicted):
+    unique = set(actual)
+    matrix = [list() for x in range(len(unique))]
+    for i in range(len(unique)):
+        matrix[i] = [0 for x in range(len(unique))]
+    lookup = dict()
+    for i, value in enumerate(unique):
+        lookup[value] = i
+    for i in range(len(actual)):
+        x = lookup[actual[i]]
+        y = lookup[predicted[i]]
+        matrix[y][x] += 1
+    return float(matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]) / sqrt(float(matrix[0][0]+matrix[0][1])*float(matrix[0][0]+matrix[1][0])*float(matrix[1][1]+matrix[0][1])*float(matrix[1][1]+matrix[1][0]))
+
+corr = matthews_corr(actual,predicted)
+
+print("This is the MCC Ranges from -1 to 1")
+
+print(corr)
+
+print("######################")
+
+print("Youdens J Ranges from 0 to 1")
+
+def yodens_jay(actual, predicted):
+    unique = set(actual)
+    matrix = [list() for x in range(len(unique))]
+    for i in range(len(unique)):
+        matrix[i] = [0 for x in range(len(unique))]
+    lookup = dict()
+    for i, value in enumerate(unique):
+        lookup[value] = i
+    for i in range(len(actual)):
+        x = lookup[actual[i]]
+        y = lookup[predicted[i]]
+        matrix[y][x] += 1
+    return matrix[0][0] / (matrix[0][0]+matrix[1][0]) + matrix[1][1] / (matrix[1][1]+matrix[0][1]) - 1
+
+jay = yodens_jay(actual,predicted)
+
+print(jay)
+
+print("######################")
+
 def mae_metric(actual,predicted):
     sum_error = 0.0
     for i in range(len(actual)):
@@ -52,3 +145,16 @@ actual = [0.1,0.2,0.3,0.4,0.5]
 predicted = [0.11, 0.19, 0.29, 0.41, 0.5]
 mae = mae_metric(actual, predicted)
 print(mae)
+print("#######################")
+
+def rmse_metric(actual, predicted):
+    sum_error = 0.0
+    for i in range(len(actual)):
+        prediction_error = predicted[i] - actual[i]
+        sum_error += (prediction_error ** 2)
+    mean_error = sum_error / float(len(actual))
+    return sqrt(mean_error)
+
+# Test out RMSE
+rmse = rmse_metric(actual, predicted)
+print(rmse)
