@@ -159,7 +159,7 @@ def cohens_kappa(actual, predicted):
 
 
 kappa = cohens_kappa(actual,predicted)
-print("Cohens Kappa, Range between 0 and 1 usually possible to be negative")
+print("Cohens Kappa, Range between 0 and 1 usually, possible to be negative")
 print(kappa)
 
 print("#######################")
